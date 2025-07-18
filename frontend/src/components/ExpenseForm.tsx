@@ -40,12 +40,11 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
         amount: Number(form.amount)
       })
       
-      // フォームをリセット
-      setForm({
-        description: '',
-        amount: '',
-        payer: 'husband'
-      })
+      // 連続登録のため説明と支払者を維持、金額のみクリア
+      setForm(prev => ({
+        ...prev,
+        amount: ''
+      }))
       setErrors({})
     }
   }
