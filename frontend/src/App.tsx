@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate, useParams } from 'react-router-dom'
-import { AccessDenied } from './components/AccessDenied'
+import { TopPage } from './components/AccessDenied'
 import { ExpenseForm } from './components/ExpenseForm'
 import { ExpenseList } from './components/ExpenseList'
 import { SettlementSummary } from './components/SettlementSummary'
 import { ShareComponent } from './components/ShareComponent'
 import { AppProvider, useAppContext } from './context/AppContext'
 import { ExpenseForm as ExpenseFormType } from './types'
-import { createPathWithId, generateRandomId, isIdentifierExists, isValidIdentifier } from './utils/identifierUtils'
+import { createPathWithId, isIdentifierExists, isValidIdentifier } from './utils/identifierUtils'
 import {
     getSettlementDirectionText,
     getSettlementStatusColor,
@@ -82,7 +82,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<RootPage />} />
+        <Route path="/" element={<TopPageComponent />} />
         <Route path="/:userId" element={<AppWrapper />} />
         <Route path="/:userId/settlement-summary" element={<SettlementSummaryWrapper />} />
       </Routes>
@@ -90,10 +90,9 @@ function App() {
   )
 }
 
-// ルートページコンポーネント
-function RootPage() {
-  const newId = generateRandomId()
-  return <Navigate to={createPathWithId(newId)} replace />
+// トップページコンポーネント
+function TopPageComponent() {
+  return <TopPage />
 }
 
 // AppProviderでラップされたMainTabs
@@ -106,7 +105,7 @@ function AppWrapper() {
 
   // 識別子が存在するかチェック
   if (!isIdentifierExists(userId)) {
-    return <AccessDenied />
+    return <TopPage />
   }
 
   return (
@@ -126,7 +125,7 @@ function SettlementSummaryWrapper() {
 
   // 識別子が存在するかチェック
   if (!isIdentifierExists(userId)) {
-    return <AccessDenied />
+    return <TopPage />
   }
 
   return (

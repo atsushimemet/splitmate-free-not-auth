@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { createPathWithId, generateRandomId } from '../utils/identifierUtils'
 import { ShareComponent } from './ShareComponent'
 
-export const AccessDenied = () => {
+export const TopPage = () => {
   const navigate = useNavigate()
 
   const handleCreateNewPage = () => {
@@ -35,9 +35,9 @@ export const AccessDenied = () => {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-md p-6 lg:p-8 text-center">
           {/* アイコン */}
-          <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
             <svg 
-              className="w-8 h-8 text-red-600" 
+              className="w-8 h-8 text-blue-600" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -46,20 +46,25 @@ export const AccessDenied = () => {
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
                 strokeWidth={2} 
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" 
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" 
               />
             </svg>
           </div>
 
           {/* タイトル */}
           <h1 className="text-xl lg:text-2xl font-bold text-gray-800 mb-3">
-            アクセスできません
+            SplitMate
           </h1>
+
+          {/* サブタイトル */}
+          <p className="text-lg text-gray-600 mb-2">
+            家計費精算システム
+          </p>
 
           {/* メッセージ */}
           <p className="text-gray-600 mb-6 leading-relaxed">
-            このページは作成者しか見ることができません。<br />
-            新しいページを作成するか、正しいURLをご確認ください。
+            夫婦の家計費を簡単に管理・精算できる<br />
+            シンプルで使いやすいアプリです。
           </p>
 
           {/* アクションボタン */}
@@ -79,7 +84,7 @@ export const AccessDenied = () => {
           {/* 追加情報 */}
           <div className="mt-6 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              SplitMate - 家計費精算システム
+              無料で利用できます
             </p>
           </div>
         </div>
