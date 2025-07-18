@@ -14,49 +14,7 @@ export const useAppState = () => {
   // 精算計算結果
   const [settlements, setSettlements] = useState<SettlementCalculation[]>([])
 
-  // 費用追加
-  const addExpense = useCallback((expense: Omit<Expense, 'id' | 'createdAt'>) => {
-    const newExpense: Expense = {
-      ...expense,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString()
-    }
-    setExpenses(prev => [...prev, newExpense])
-    
-    // 精算計算を実行
-    calculateSettlement(newExpense)
-  }, [allocationRatio])
-
-  // 費用削除
-  const deleteExpense = useCallback((id: string) => {
-    setExpenses(prev => prev.filter(expense => expense.id !== id))
-    setSettlements(prev => prev.filter(settlement => settlement.expenseId !== id))
-  }, [])
-
-  // 費用編集
-  const updateExpense = useCallback((id: string, updatedExpense: Partial<Expense>) => {
-    setExpenses(prev => 
-      prev.map(expense => 
-        expense.id === id ? { ...expense, ...updatedExpense } : expense
-      )
-    )
-    
-    // 精算計算を再実行
-    const expense = expenses.find(e => e.id === id)
-    if (expense) {
-      calculateSettlement({ ...expense, ...updatedExpense })
-    }
-  }, [expenses, allocationRatio])
-
-  // 配分比率更新
-  const updateAllocationRatio = useCallback((ratio: AllocationRatio) => {
-    setAllocationRatio(ratio)
-    
-    // 全ての費用に対して精算を再計算
-    expenses.forEach(expense => calculateSettlement(expense))
-  }, [expenses])
-
-  // 精算計算
+  // 精算計算（最初に定義）
   const calculateSettlement = useCallback((expense: Expense) => {
     const husbandBurden = (expense.amount * allocationRatio.husband) / 100
     const wifeBurden = (expense.amount * allocationRatio.wife) / 100
@@ -89,6 +47,48 @@ export const useAppState = () => {
       return [...filtered, settlement]
     })
   }, [allocationRatio])
+
+  // 費用追加
+  const addExpense = useCallback((expense: Omit<Expense, 'id' | 'createdAt'>) => {
+    const newExpense: Expense = {
+      ...expense,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString()
+    }
+    setExpenses(prev => [...prev, newExpense])
+    
+    // 精算計算を実行
+    calculateSettlement(newExpense)
+  }, [calculateSettlement])
+
+  // 費用削除
+  const deleteExpense = useCallback((id: string) => {
+    setExpenses(prev => prev.filter(expense => expense.id !== id))
+    setSettlements(prev => prev.filter(settlement => settlement.expenseId !== id))
+  }, [])
+
+  // 費用編集
+  const updateExpense = useCallback((id: string, updatedExpense: Partial<Expense>) => {
+    setExpenses(prev => 
+      prev.map(expense => 
+        expense.id === id ? { ...expense, ...updatedExpense } : expense
+      )
+    )
+    
+    // 精算計算を再実行
+    const expense = expenses.find(e => e.id === id)
+    if (expense) {
+      calculateSettlement({ ...expense, ...updatedExpense })
+    }
+  }, [expenses, calculateSettlement])
+
+  // 配分比率更新
+  const updateAllocationRatio = useCallback((ratio: AllocationRatio) => {
+    setAllocationRatio(ratio)
+    
+    // 全ての費用に対して精算を再計算
+    expenses.forEach(expense => calculateSettlement(expense))
+  }, [expenses, calculateSettlement])
 
   // 精算承認
   const approveSettlement = useCallback((expenseId: string) => {

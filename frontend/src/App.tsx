@@ -1,19 +1,28 @@
 import { useState } from 'react'
+import { Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom'
 import { ExpenseForm } from './components/ExpenseForm'
 import { ExpenseList } from './components/ExpenseList'
-import { useAppState } from './hooks/useAppState'
+import { SettlementSummary } from './components/SettlementSummary'
+import { AppProvider, useAppContext } from './context/AppContext'
 import { ExpenseForm as ExpenseFormType } from './types'
+import {
+    getSettlementDirectionText,
+    getSettlementStatusColor,
+    getSettlementStatusText
+} from './utils/settlementUtils'
 
 type TabType = 'expense' | 'allocation' | 'settlement'
 
-function App() {
+// メインのタブコンポーネント
+function MainTabs() {
   const [activeTab, setActiveTab] = useState<TabType>('expense')
-  const appState = useAppState()
+  const appState = useAppContext()
+  const navigate = useNavigate()
 
   const tabs = [
     { id: 'expense', label: '費用入力', content: <ExpenseTab appState={appState} /> },
     { id: 'allocation', label: '配分比率設定', content: <AllocationTab appState={appState} /> },
-    { id: 'settlement', label: '精算管理', content: <SettlementTab appState={appState} /> }
+    { id: 'settlement', label: '精算管理', content: <SettlementTab appState={appState} navigate={navigate} /> }
   ]
 
   return (
@@ -51,6 +60,37 @@ function App() {
         </div>
       </div>
     </div>
+  )
+}
+
+// Appコンポーネント（ルーター統合）
+function App() {
+  return (
+    <AppProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainTabs />} />
+          <Route path="/settlement-summary" element={<SettlementSummaryPage />} />
+        </Routes>
+      </Router>
+    </AppProvider>
+  )
+}
+
+// 精算サマリーページ
+function SettlementSummaryPage() {
+  const appState = useAppContext()
+  const navigate = useNavigate()
+
+  const handleBack = () => {
+    navigate('/')
+  }
+
+  return (
+    <SettlementSummary 
+      settlements={appState.settlements} 
+      onBack={handleBack}
+    />
   )
 }
 
@@ -159,7 +199,13 @@ function AllocationTab({ appState }: { appState: ReturnType<typeof useAppState> 
 }
 
 // 精算管理タブ
-function SettlementTab({ appState }: { appState: ReturnType<typeof useAppState> }) {
+function SettlementTab({ 
+  appState, 
+  navigate 
+}: { 
+  appState: ReturnType<typeof useAppState>, 
+  navigate: (path: string) => void 
+}) {
   const { settlements, approveSettlement, completeSettlement } = appState
   const [selectedSettlements, setSelectedSettlements] = useState<Set<string>>(new Set())
 
@@ -188,27 +234,12 @@ function SettlementTab({ appState }: { appState: ReturnType<typeof useAppState> 
     }
   }
 
-  const getSettlementDirectionText = (direction: string) => {
-    return direction === 'husband_to_wife' ? '夫 → 妻' : '妻 → 夫'
+  const handleViewSummary = () => {
+    navigate('/settlement-summary')
   }
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'pending': return '保留'
-      case 'approved': return '承認済み'
-      case 'completed': return '完了'
-      default: return status
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'approved': return 'bg-blue-100 text-blue-800'
-      case 'completed': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
+  // 承認済み精算の件数
+  const approvedCount = settlements.filter(s => s.status === 'approved').length
 
   if (settlements.length === 0) {
     return (
@@ -223,20 +254,33 @@ function SettlementTab({ appState }: { appState: ReturnType<typeof useAppState> 
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6 gap-3 lg:gap-0">
         <h2 className="text-xl font-semibold">精算管理</h2>
         
-        {selectedSettlements.size > 0 && (
-          <button
-            onClick={handleBulkApprove}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-          >
-            一括承認 ({selectedSettlements.size})
-          </button>
-        )}
+        <div className="flex gap-2">
+          {/* 精算サマリーボタン */}
+          {approvedCount > 0 && (
+            <button
+              onClick={handleViewSummary}
+              className="px-3 lg:px-4 py-2 bg-green-600 text-white text-xs lg:text-sm rounded-md hover:bg-green-700 whitespace-nowrap"
+            >
+              精算サマリー ({approvedCount}件)
+            </button>
+          )}
+          
+          {/* 一括承認ボタン */}
+          {selectedSettlements.size > 0 && (
+            <button
+              onClick={handleBulkApprove}
+              className="px-3 lg:px-4 py-2 bg-blue-600 text-white text-xs lg:text-sm rounded-md hover:bg-blue-700 whitespace-nowrap"
+            >
+              一括承認 ({selectedSettlements.size})
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md">
+      <div className="bg-white lg:rounded-lg lg:shadow-md">
         <div className="p-4 border-b border-gray-200">
           <label className="flex items-center gap-2 text-sm text-gray-600">
             <input
@@ -291,8 +335,8 @@ function SettlementTab({ appState }: { appState: ReturnType<typeof useAppState> 
                     ¥{Math.round(settlement.settlementAmount).toLocaleString()}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(settlement.status)}`}>
-                      {getStatusText(settlement.status)}
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSettlementStatusColor(settlement.status)}`}>
+                      {getSettlementStatusText(settlement.status)}
                     </span>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm">
