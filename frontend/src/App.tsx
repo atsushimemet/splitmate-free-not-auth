@@ -34,6 +34,7 @@ function MainTabs() {
   ]
 
   const handleLogoClick = () => {
+    console.log('SplitMate logo clicked - navigating to landing page')
     navigate('/landing_page')
   }
 
@@ -43,12 +44,12 @@ function MainTabs() {
         <header className="py-3 px-4 lg:py-6">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h1 
-                className="text-2xl lg:text-3xl font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
+              <button 
+                className="text-2xl lg:text-3xl font-bold text-gray-800 hover:text-blue-600 transition-colors bg-transparent border-none p-0 cursor-pointer"
                 onClick={handleLogoClick}
               >
                 SplitMate
-              </h1>
+              </button>
               <p className="text-gray-600 mt-1 text-sm lg:text-base">家計費精算システム</p>
             </div>
             <ShareComponent />
