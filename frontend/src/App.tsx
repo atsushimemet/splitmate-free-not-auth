@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom'
+import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate, useParams } from 'react-router-dom'
 import { ExpenseForm } from './components/ExpenseForm'
 import { ExpenseList } from './components/ExpenseList'
 import { SettlementSummary } from './components/SettlementSummary'
 import { AppProvider, useAppContext } from './context/AppContext'
 import { ExpenseForm as ExpenseFormType } from './types'
+import { createPathWithId, generateRandomId, isValidIdentifier } from './utils/identifierUtils'
 import {
     getSettlementDirectionText,
     getSettlementStatusColor,
@@ -13,16 +14,23 @@ import {
 
 type TabType = 'expense' | 'allocation' | 'settlement'
 
+// ルートリダイレクトコンポーネント
+function RootRedirect() {
+  const newId = generateRandomId()
+  return <Navigate to={createPathWithId(newId)} replace />
+}
+
 // メインのタブコンポーネント
 function MainTabs() {
   const [activeTab, setActiveTab] = useState<TabType>('expense')
   const appState = useAppContext()
   const navigate = useNavigate()
+  const { userId } = useParams<{ userId: string }>()!
 
   const tabs = [
     { id: 'expense', label: '費用入力', content: <ExpenseTab appState={appState} /> },
     { id: 'allocation', label: '配分比率設定', content: <AllocationTab appState={appState} /> },
-    { id: 'settlement', label: '精算管理', content: <SettlementTab appState={appState} navigate={navigate} /> }
+    { id: 'settlement', label: '精算管理', content: <SettlementTab appState={appState} navigate={navigate} userId={userId} /> }
   ]
 
   return (
@@ -66,13 +74,42 @@ function MainTabs() {
 // Appコンポーネント（ルーター統合）
 function App() {
   return (
-    <AppProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<MainTabs />} />
-          <Route path="/settlement-summary" element={<SettlementSummaryPage />} />
-        </Routes>
-      </Router>
+    <Router>
+      <Routes>
+        <Route path="/" element={<RootRedirect />} />
+        <Route path="/:userId" element={<AppWrapper />} />
+        <Route path="/:userId/settlement-summary" element={<SettlementSummaryWrapper />} />
+      </Routes>
+    </Router>
+  )
+}
+
+// AppProviderでラップされたMainTabs
+function AppWrapper() {
+  const { userId } = useParams<{ userId: string }>()
+  
+  if (!userId || !isValidIdentifier(userId)) {
+    return <Navigate to="/" replace />
+  }
+
+  return (
+    <AppProvider userId={userId}>
+      <MainTabs />
+    </AppProvider>
+  )
+}
+
+// AppProviderでラップされたSettlementSummaryPage
+function SettlementSummaryWrapper() {
+  const { userId } = useParams<{ userId: string }>()
+  
+  if (!userId || !isValidIdentifier(userId)) {
+    return <Navigate to="/" replace />
+  }
+
+  return (
+    <AppProvider userId={userId}>
+      <SettlementSummaryPage />
     </AppProvider>
   )
 }
@@ -81,9 +118,12 @@ function App() {
 function SettlementSummaryPage() {
   const appState = useAppContext()
   const navigate = useNavigate()
+  const { userId } = useParams<{ userId: string }>()
 
   const handleBack = () => {
-    navigate('/')
+    if (userId) {
+      navigate(createPathWithId(userId))
+    }
   }
 
   return (
@@ -202,10 +242,12 @@ function AllocationTab({ appState }: { appState: ReturnType<typeof useAppState> 
 // 精算管理タブ
 function SettlementTab({ 
   appState, 
-  navigate 
+  navigate,
+  userId
 }: { 
   appState: ReturnType<typeof useAppState>, 
-  navigate: (path: string) => void 
+  navigate: (path: string) => void,
+  userId: string
 }) {
   const { settlements, approveSettlement, completeSettlement } = appState
   const [selectedSettlements, setSelectedSettlements] = useState<Set<string>>(new Set())
@@ -236,7 +278,7 @@ function SettlementTab({
   }
 
   const handleViewSummary = () => {
-    navigate('/settlement-summary')
+    navigate(createPathWithId(userId, '/settlement-summary'))
   }
 
   // 承認済み精算の件数

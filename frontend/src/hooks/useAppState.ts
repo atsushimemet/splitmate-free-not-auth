@@ -1,18 +1,59 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AllocationRatio, Expense, SettlementCalculation } from '../types'
 
-export const useAppState = () => {
+// localStorageのキー生成
+const getStorageKey = (id: string, dataType: string) => `splitmate_${id}_${dataType}`
+
+// localStorageからデータを取得
+const loadFromStorage = <T>(id: string, dataType: string, defaultValue: T): T => {
+  try {
+    const key = getStorageKey(id, dataType)
+    const item = localStorage.getItem(key)
+    return item ? JSON.parse(item) : defaultValue
+  } catch (error) {
+    console.error('Failed to load from localStorage:', error)
+    return defaultValue
+  }
+}
+
+// localStorageにデータを保存
+const saveToStorage = <T>(id: string, dataType: string, data: T): void => {
+  try {
+    const key = getStorageKey(id, dataType)
+    localStorage.setItem(key, JSON.stringify(data))
+  } catch (error) {
+    console.error('Failed to save to localStorage:', error)
+  }
+}
+
+export const useAppState = (userId: string) => {
   // 費用データ
-  const [expenses, setExpenses] = useState<Expense[]>([])
+  const [expenses, setExpenses] = useState<Expense[]>(() => 
+    loadFromStorage(userId, 'expenses', [])
+  )
   
   // 配分比率（デフォルト値：夫70%, 妻30%）
-  const [allocationRatio, setAllocationRatio] = useState<AllocationRatio>({
-    husband: 70,
-    wife: 30
-  })
+  const [allocationRatio, setAllocationRatio] = useState<AllocationRatio>(() =>
+    loadFromStorage(userId, 'allocation', { husband: 70, wife: 30 })
+  )
   
   // 精算計算結果
-  const [settlements, setSettlements] = useState<SettlementCalculation[]>([])
+  const [settlements, setSettlements] = useState<SettlementCalculation[]>(() =>
+    loadFromStorage(userId, 'settlements', [])
+  )
+
+  // データが変更されたときにlocalStorageに保存
+  useEffect(() => {
+    saveToStorage(userId, 'expenses', expenses)
+  }, [userId, expenses])
+
+  useEffect(() => {
+    saveToStorage(userId, 'allocation', allocationRatio)
+  }, [userId, allocationRatio])
+
+  useEffect(() => {
+    saveToStorage(userId, 'settlements', settlements)
+  }, [userId, settlements])
 
   // 精算計算（最初に定義）
   const calculateSettlement = useCallback((expense: Expense) => {
@@ -114,16 +155,35 @@ export const useAppState = () => {
 
   // 承認済み精算と対応する費用を削除（精算完了後のクリーンアップ）
   const clearApprovedSettlements = useCallback(() => {
-    // 承認済みの精算を取得
-    const approvedSettlements = settlements.filter(s => s.status === 'approved')
-    const approvedExpenseIds = approvedSettlements.map(s => s.expenseId)
-    
-    // 承認済みの費用を削除
-    setExpenses(prev => prev.filter(expense => !approvedExpenseIds.includes(expense.id)))
-    
-    // 承認済みの精算データを削除
-    setSettlements(prev => prev.filter(settlement => settlement.status !== 'approved'))
-  }, [settlements])
+    setSettlements(prev => {
+      // 承認済みの精算を取得
+      const approvedSettlements = prev.filter(s => s.status === 'approved')
+      const approvedExpenseIds = approvedSettlements.map(s => s.expenseId)
+      
+      console.log('承認済み精算件数:', approvedSettlements.length)
+      console.log('削除対象費用ID:', approvedExpenseIds)
+      
+      // 承認済みの費用を削除
+      setExpenses(expensePrev => {
+        const filteredExpenses = expensePrev.filter(expense => !approvedExpenseIds.includes(expense.id))
+        console.log('削除前費用件数:', expensePrev.length, '削除後費用件数:', filteredExpenses.length)
+        
+        // localStorageに即座に保存
+        saveToStorage(userId, 'expenses', filteredExpenses)
+        
+        return filteredExpenses
+      })
+      
+      // 承認済みの精算データを削除
+      const filteredSettlements = prev.filter(settlement => settlement.status !== 'approved')
+      console.log('削除前精算件数:', prev.length, '削除後精算件数:', filteredSettlements.length)
+      
+      // localStorageに即座に保存
+      saveToStorage(userId, 'settlements', filteredSettlements)
+      
+      return filteredSettlements
+    })
+  }, [userId])
 
   return {
     // データ

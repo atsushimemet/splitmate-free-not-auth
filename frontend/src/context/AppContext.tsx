@@ -9,10 +9,11 @@ const AppContext = createContext<AppContextType | undefined>(undefined)
 // Provider コンポーネント
 interface AppProviderProps {
   children: ReactNode
+  userId: string
 }
 
-export const AppProvider = ({ children }: AppProviderProps) => {
-  const appState = useAppState()
+export const AppProvider = ({ children, userId }: AppProviderProps) => {
+  const appState = useAppState(userId)
   
   return (
     <AppContext.Provider value={appState}>
