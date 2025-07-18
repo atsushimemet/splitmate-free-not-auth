@@ -10,9 +10,9 @@ import { AppProvider, useAppContext } from './context/AppContext'
 import { ExpenseForm as ExpenseFormType } from './types'
 import { createPathWithId, isIdentifierExists, isValidIdentifier } from './utils/identifierUtils'
 import {
-    getSettlementDirectionText,
-    getSettlementStatusColor,
-    getSettlementStatusText
+  getSettlementDirectionText,
+  getSettlementStatusColor,
+  getSettlementStatusText
 } from './utils/settlementUtils'
 
 type TabType = 'expense' | 'allocation' | 'settlement'
@@ -33,13 +33,22 @@ function MainTabs() {
     { id: 'settlement', label: '精算管理', content: <SettlementTab appState={appState} navigate={navigate} userId={currentUserId} /> }
   ]
 
+  const handleLogoClick = () => {
+    navigate('/landing_page')
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="w-full lg:max-w-6xl lg:mx-auto">
         <header className="py-3 px-4 lg:py-6">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">SplitMate</h1>
+              <h1 
+                className="text-2xl lg:text-3xl font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
+                onClick={handleLogoClick}
+              >
+                SplitMate
+              </h1>
               <p className="text-gray-600 mt-1 text-sm lg:text-base">家計費精算システム</p>
             </div>
             <ShareComponent />

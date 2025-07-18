@@ -52,7 +52,10 @@ export const TopPage = () => {
           </div>
 
           {/* タイトル */}
-          <h1 className="text-xl lg:text-2xl font-bold text-gray-800 mb-3">
+          <h1 
+            className="text-xl lg:text-2xl font-bold text-gray-800 mb-3 cursor-pointer hover:text-blue-600 transition-colors"
+            onClick={() => navigate('/landing_page')}
+          >
             SplitMate
           </h1>
 
