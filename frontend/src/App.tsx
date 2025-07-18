@@ -93,11 +93,7 @@ function App() {
 // ルートページコンポーネント
 function RootPage() {
   const newId = generateRandomId()
-  return (
-    <AppProvider userId={newId}>
-      <MainTabs />
-    </AppProvider>
-  )
+  return <Navigate to={createPathWithId(newId)} replace />
 }
 
 // AppProviderでラップされたMainTabs
