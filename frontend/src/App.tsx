@@ -4,6 +4,7 @@ import { TopPage } from './components/AccessDenied'
 import { ExpenseForm } from './components/ExpenseForm'
 import { ExpenseList } from './components/ExpenseList'
 import { LandingPage } from './components/LandingPage'
+import { RakutenCardBanner } from './components/RakutenCardBanner'
 import { SettlementSummary } from './components/SettlementSummary'
 import { ShareComponent } from './components/ShareComponent'
 import { AppProvider, useAppContext } from './context/AppContext'
@@ -261,6 +262,10 @@ function AllocationTab({ appState }: { appState: any }) {
           設定を保存
         </button>
       </div>
+
+      {/* 楽天カードアフィリエイト - 一時的にコメントアウト */}
+      {/* <RakutenCardAffiliate /> */}
+      <RakutenCardBanner />
     </div>
   )
 }
