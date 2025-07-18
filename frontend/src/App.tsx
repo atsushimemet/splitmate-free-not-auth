@@ -16,11 +16,7 @@ import {
 
 type TabType = 'expense' | 'allocation' | 'settlement'
 
-// ルートリダイレクトコンポーネント
-function RootRedirect() {
-  const newId = generateRandomId()
-  return <Navigate to={createPathWithId(newId)} replace />
-}
+
 
 // メインのタブコンポーネント
 function MainTabs() {
@@ -87,11 +83,21 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<RootRedirect />} />
+        <Route path="/" element={<RootPage />} />
         <Route path="/:userId" element={<AppWrapper />} />
         <Route path="/:userId/settlement-summary" element={<SettlementSummaryWrapper />} />
       </Routes>
     </Router>
+  )
+}
+
+// ルートページコンポーネント
+function RootPage() {
+  const newId = generateRandomId()
+  return (
+    <AppProvider userId={newId}>
+      <MainTabs />
+    </AppProvider>
   )
 }
 
