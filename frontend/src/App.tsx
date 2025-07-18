@@ -90,6 +90,7 @@ function SettlementSummaryPage() {
     <SettlementSummary 
       settlements={appState.settlements} 
       onBack={handleBack}
+      onClearApprovedSettlements={appState.clearApprovedSettlements}
     />
   )
 }

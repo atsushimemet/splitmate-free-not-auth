@@ -112,6 +112,19 @@ export const useAppState = () => {
     )
   }, [])
 
+  // 承認済み精算と対応する費用を削除（精算完了後のクリーンアップ）
+  const clearApprovedSettlements = useCallback(() => {
+    // 承認済みの精算を取得
+    const approvedSettlements = settlements.filter(s => s.status === 'approved')
+    const approvedExpenseIds = approvedSettlements.map(s => s.expenseId)
+    
+    // 承認済みの費用を削除
+    setExpenses(prev => prev.filter(expense => !approvedExpenseIds.includes(expense.id)))
+    
+    // 承認済みの精算データを削除
+    setSettlements(prev => prev.filter(settlement => settlement.status !== 'approved'))
+  }, [settlements])
+
   return {
     // データ
     expenses,
@@ -124,6 +137,7 @@ export const useAppState = () => {
     updateExpense,
     updateAllocationRatio,
     approveSettlement,
-    completeSettlement
+    completeSettlement,
+    clearApprovedSettlements
   }
 } 

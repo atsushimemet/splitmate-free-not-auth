@@ -10,10 +10,17 @@ import {
 interface SettlementSummaryProps {
   settlements: SettlementCalculation[]
   onBack: () => void
+  onClearApprovedSettlements: () => void
 }
 
-export const SettlementSummary = ({ settlements, onBack }: SettlementSummaryProps) => {
+export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettlements }: SettlementSummaryProps) => {
   const summary = calculateSettlementSummary(settlements)
+
+  // 戻るボタンのハンドラ（承認済み精算をクリアしてから画面遷移）
+  const handleBack = () => {
+    onClearApprovedSettlements() // 承認済み精算をクリア
+    onBack() // 画面遷移
+  }
 
   // 支払者の表示名
   const getPayerName = (payer: 'husband' | 'wife') => {
@@ -33,7 +40,7 @@ export const SettlementSummary = ({ settlements, onBack }: SettlementSummaryProp
         <header className="text-center py-3 px-4 lg:py-6 bg-white lg:bg-transparent">
           <div className="flex items-center justify-between">
             <button
-              onClick={onBack}
+              onClick={handleBack}
               className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm lg:text-base"
             >
               ← 戻る
