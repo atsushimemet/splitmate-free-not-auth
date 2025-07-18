@@ -36,7 +36,7 @@ export const ShareComponent = ({ className = '' }: ShareComponentProps) => {
   return (
     <button
       onClick={handleShare}
-      className={`flex items-center gap-1 px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm rounded-md transition-all ${
+      className={`flex items-center gap-1 px-3 lg:px-3 py-2 lg:py-2 text-xs lg:text-sm rounded-md transition-all ${
         copied 
           ? 'bg-green-600 text-white' 
           : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -44,7 +44,7 @@ export const ShareComponent = ({ className = '' }: ShareComponentProps) => {
       title="アプリを友人に紹介"
     >
       <svg 
-        className="w-3 h-3 lg:w-4 lg:h-4" 
+        className="w-4 h-4 lg:w-4 lg:h-4" 
         fill="none" 
         stroke="currentColor" 
         viewBox="0 0 24 24"
@@ -65,7 +65,7 @@ export const ShareComponent = ({ className = '' }: ShareComponentProps) => {
           />
         )}
       </svg>
-      <span className="hidden lg:inline">
+      <span>
         {copied ? 'コピー完了!' : 'アプリ紹介'}
       </span>
     </button>
