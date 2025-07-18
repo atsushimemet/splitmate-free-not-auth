@@ -112,10 +112,13 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
                 <div className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
                   ¥{summary.totalSettlementAmount.toLocaleString()}
                 </div>
-                <p className="text-gray-600 text-sm lg:text-base">
+                <p className="text-gray-600 text-sm lg:text-base mb-2">
                   {summary.finalDirection === 'husband_to_wife' 
                     ? '夫から妻に精算してください' 
                     : '妻から夫に精算してください'}
+                </p>
+                <p className="text-gray-500 text-xs lg:text-sm">
+                  💡 ページをスクロールするとLINE送信用にコピペできます
                 </p>
               </div>
             )}
