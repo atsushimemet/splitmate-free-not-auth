@@ -157,5 +157,9 @@ export function generateShareableText(summary: SettlementSummary): string {
     lines.push(`計${summary.approvedSettlements.length}件の費用、総額: ¥${totalAmount.toLocaleString()}`)
   }
   
+  // 戻るボタンについての注意喚起
+  lines.push('')
+  lines.push('LINEで連携した後は、精算サマリーページ上部の"戻る"ボタンを押下することを忘れずに')
+  
   return lines.join('\n')
 } 
