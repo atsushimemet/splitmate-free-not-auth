@@ -15,7 +15,9 @@ export default defineConfig({
       input: {
         main: 'index.html'
       }
-    }
+    },
+    outDir: 'dist',
+    assetsDir: 'assets'
   },
   publicDir: 'public'
 }) 
