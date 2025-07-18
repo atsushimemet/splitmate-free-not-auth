@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate, useParams } from 'react-router-dom'
+import { AccessDenied } from './components/AccessDenied'
 import { ExpenseForm } from './components/ExpenseForm'
 import { ExpenseList } from './components/ExpenseList'
 import { SettlementSummary } from './components/SettlementSummary'
 import { ShareComponent } from './components/ShareComponent'
 import { AppProvider, useAppContext } from './context/AppContext'
 import { ExpenseForm as ExpenseFormType } from './types'
-import { createPathWithId, generateRandomId, isValidIdentifier } from './utils/identifierUtils'
+import { createPathWithId, generateRandomId, isIdentifierExists, isValidIdentifier } from './utils/identifierUtils'
 import {
     getSettlementDirectionText,
     getSettlementStatusColor,
@@ -102,6 +103,11 @@ function AppWrapper() {
     return <Navigate to="/" replace />
   }
 
+  // 識別子が存在するかチェック
+  if (!isIdentifierExists(userId)) {
+    return <AccessDenied />
+  }
+
   return (
     <AppProvider userId={userId}>
       <MainTabs />
@@ -115,6 +121,11 @@ function SettlementSummaryWrapper() {
   
   if (!userId || !isValidIdentifier(userId)) {
     return <Navigate to="/" replace />
+  }
+
+  // 識別子が存在するかチェック
+  if (!isIdentifierExists(userId)) {
+    return <AccessDenied />
   }
 
   return (

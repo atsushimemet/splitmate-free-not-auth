@@ -27,6 +27,29 @@ const saveToStorage = <T>(id: string, dataType: string, data: T): void => {
 }
 
 export const useAppState = (userId: string) => {
+  // 初期データの作成と保存
+  const initializeData = useCallback(() => {
+    const expenses = loadFromStorage(userId, 'expenses', null)
+    const allocation = loadFromStorage(userId, 'allocation', null)
+    const settlements = loadFromStorage(userId, 'settlements', null)
+    
+    // データが存在しない場合は初期データを作成
+    if (expenses === null) {
+      saveToStorage(userId, 'expenses', [])
+    }
+    if (allocation === null) {
+      saveToStorage(userId, 'allocation', { husband: 70, wife: 30 })
+    }
+    if (settlements === null) {
+      saveToStorage(userId, 'settlements', [])
+    }
+  }, [userId])
+
+  // コンポーネントマウント時に初期データを作成
+  useEffect(() => {
+    initializeData()
+  }, [initializeData])
+
   // 費用データ
   const [expenses, setExpenses] = useState<Expense[]>(() => 
     loadFromStorage(userId, 'expenses', [])
