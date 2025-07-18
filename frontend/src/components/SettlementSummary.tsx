@@ -7,6 +7,7 @@ import {
     getSettlementStatusColor,
     getSettlementStatusText
 } from '../utils/settlementUtils'
+import { ShareComponent } from './ShareComponent'
 
 interface SettlementSummaryProps {
   settlements: SettlementCalculation[]
@@ -90,7 +91,7 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
               <h1 className="text-lg lg:text-2xl font-bold text-gray-800">精算サマリー</h1>
               <p className="text-gray-600 text-xs lg:text-sm mt-1">承認済み費用の精算結果</p>
             </div>
-            <div className="w-12"></div> {/* 戻るボタンとのバランス調整 */}
+            <ShareComponent />
           </div>
         </header>
 

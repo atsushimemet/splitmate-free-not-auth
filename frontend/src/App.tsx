@@ -3,6 +3,7 @@ import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate, useParam
 import { ExpenseForm } from './components/ExpenseForm'
 import { ExpenseList } from './components/ExpenseList'
 import { SettlementSummary } from './components/SettlementSummary'
+import { ShareComponent } from './components/ShareComponent'
 import { AppProvider, useAppContext } from './context/AppContext'
 import { ExpenseForm as ExpenseFormType } from './types'
 import { createPathWithId, generateRandomId, isValidIdentifier } from './utils/identifierUtils'
@@ -40,9 +41,14 @@ function MainTabs() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="w-full lg:max-w-6xl lg:mx-auto">
-        <header className="text-center py-3 px-4 lg:py-6">
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">SplitMate</h1>
-          <p className="text-gray-600 mt-1 text-sm lg:text-base">家計費精算システム</p>
+        <header className="py-3 px-4 lg:py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">SplitMate</h1>
+              <p className="text-gray-600 mt-1 text-sm lg:text-base">家計費精算システム</p>
+            </div>
+            <ShareComponent />
+          </div>
         </header>
 
         {/* タブナビゲーション */}
