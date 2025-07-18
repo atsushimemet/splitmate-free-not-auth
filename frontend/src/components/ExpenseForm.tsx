@@ -71,11 +71,11 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h3 className="text-lg font-semibold mb-4">新しい費用を追加</h3>
+    <div className="bg-white p-4 lg:p-6 lg:rounded-lg lg:shadow-md mb-4 lg:mb-6">
+      <h3 className="text-base lg:text-lg font-semibold mb-3 lg:mb-4">新しい費用を追加</h3>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
           {/* 説明 */}
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">

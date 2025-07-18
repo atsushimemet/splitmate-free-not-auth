@@ -88,24 +88,24 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
 
   if (expenses.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold mb-4">費用一覧</h3>
-        <p className="text-gray-500 text-center py-8">まだ費用が登録されていません</p>
+      <div className="bg-white p-4 lg:p-6 lg:rounded-lg lg:shadow-md">
+        <h3 className="text-base lg:text-lg font-semibold mb-3 lg:mb-4">費用一覧</h3>
+        <p className="text-gray-500 text-center py-6 lg:py-8">まだ費用が登録されていません</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">費用一覧</h3>
+    <div className="bg-white lg:rounded-lg lg:shadow-md">
+      <div className="p-4 lg:p-6 border-b border-gray-200">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-3 lg:mb-4 gap-2 lg:gap-0">
+          <h3 className="text-base lg:text-lg font-semibold">費用一覧</h3>
           <div className="flex gap-2 items-center">
             {/* 月フィルター */}
             <select
               value={filterMonth}
               onChange={(e) => setFilterMonth(e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+              className="px-2 lg:px-3 py-1 border border-gray-300 rounded-md text-xs lg:text-sm flex-1 lg:flex-none"
             >
               <option value="">全ての月</option>
               {getMonthOptions().map(month => (
@@ -119,7 +119,7 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
             {selectedItems.size > 0 && (
               <button
                 onClick={handleBulkDelete}
-                className="px-3 py-1 bg-red-600 text-white text-sm rounded-md hover:bg-red-700"
+                className="px-2 lg:px-3 py-1 bg-red-600 text-white text-xs lg:text-sm rounded-md hover:bg-red-700 whitespace-nowrap"
               >
                 選択削除 ({selectedItems.size})
               </button>

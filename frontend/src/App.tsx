@@ -17,35 +17,35 @@ function App() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-6xl mx-auto">
-        <header className="text-center py-6">
-          <h1 className="text-3xl font-bold text-gray-800">SplitMate</h1>
-          <p className="text-gray-600 mt-2">家計費精算システム</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="w-full lg:max-w-6xl lg:mx-auto">
+        <header className="text-center py-3 px-4 lg:py-6">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">SplitMate</h1>
+          <p className="text-gray-600 mt-1 text-sm lg:text-base">家計費精算システム</p>
         </header>
 
         {/* タブナビゲーション */}
-        <div className="bg-white rounded-lg shadow-md">
+        <div className="bg-white lg:rounded-lg lg:shadow-md mx-2 lg:mx-0">
           <div className="border-b border-gray-200">
             <nav className="flex">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  className={`py-3 px-6 text-sm font-medium transition-colors ${
+                  className={`flex-1 py-3 px-2 lg:px-6 text-xs lg:text-sm font-medium transition-colors ${
                     activeTab === tab.id
                       ? 'border-b-2 border-blue-500 text-blue-600'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                   onClick={() => setActiveTab(tab.id as TabType)}
                 >
-                  {tab.label}
+                  <span className="block lg:inline">{tab.label}</span>
                 </button>
               ))}
             </nav>
           </div>
 
           {/* タブコンテンツ */}
-          <div className="p-6">
+          <div className="p-3 lg:p-6">
             {tabs.find(tab => tab.id === activeTab)?.content}
           </div>
         </div>
