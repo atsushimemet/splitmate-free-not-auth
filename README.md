@@ -121,6 +121,41 @@
 #### 3.3.2 データベース互換性
 - **PostgreSQL**
 
+#### 3.3.3 ディレクトリ構成
+- モノレポ構成
+```
+.
+├── README.md
+├── backend
+│   ├── Dockerfile.postgres.dev
+│   ├── Dockerfile.render
+│   ├── dist
+│   ├── env.example.development
+│   ├── env.example.production
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── src
+│   └── tsconfig.json
+├── docker-compose.postgres.yml
+├── docs
+├── frontend
+│   ├── Dockerfile.dev
+│   ├── dist
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── src
+│   ├── tailwind.config.js
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── netlify.toml
+├── package-lock.json
+├── package.json
+└── scripts
+```
+
 ## 4. 今後の拡張予定
 
 ### 4.1 通知機能
