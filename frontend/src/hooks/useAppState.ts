@@ -211,6 +211,7 @@ export const useAppState = (userId: string) => {
 
   return {
     // データ
+    userId,
     expenses,
     allocationRatio,
     settlements,

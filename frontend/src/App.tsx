@@ -25,14 +25,13 @@ function MainTabs() {
   const navigate = useNavigate()
   const { userId } = useParams<{ userId: string }>()
   
-  if (!userId || !isValidIdentifier(userId)) {
-    return <Navigate to="/" replace />
-  }
+  // ルートページの場合はuserIdがundefinedになるので、AppContextから取得
+  const currentUserId = userId || appState.userId
 
   const tabs = [
     { id: 'expense', label: '費用入力', content: <ExpenseTab appState={appState} /> },
     { id: 'allocation', label: '配分比率設定', content: <AllocationTab appState={appState} /> },
-    { id: 'settlement', label: '精算管理', content: <SettlementTab appState={appState} navigate={navigate} userId={userId} /> }
+    { id: 'settlement', label: '精算管理', content: <SettlementTab appState={appState} navigate={navigate} userId={currentUserId} /> }
   ]
 
   return (
