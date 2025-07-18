@@ -9,5 +9,13 @@ export default defineConfig({
     watch: {
       usePolling: true
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html'
+      }
+    }
+  },
+  publicDir: 'public'
 }) 
