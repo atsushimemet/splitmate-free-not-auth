@@ -110,3 +110,52 @@ export const getSettlementStatusColor = (status: string): string => {
     default: return 'bg-gray-100 text-gray-800'
   }
 } 
+
+// LINE共有用の精算サマリーテキストを生成
+export function generateShareableText(summary: SettlementSummary): string {
+  const lines: string[] = []
+  
+  lines.push('【精算サマリー】')
+  
+  // 最終精算結果
+  if (summary.finalDirection === 'no_settlement') {
+    lines.push('最終精算結果: 精算不要')
+  } else {
+    const directionText = getSettlementDirectionText(summary.finalDirection)
+    lines.push(`最終精算結果: ${directionText} ¥${summary.totalSettlementAmount.toLocaleString()}`)
+  }
+  
+  lines.push('')
+  lines.push('詳細:')
+  
+  // 夫の詳細
+  lines.push(`夫　実際の支払額: ¥${summary.husbandTotalPaid.toLocaleString()}`)
+  lines.push(`　　負担すべき額: ¥${Math.round(summary.husbandTotalBurden).toLocaleString()}`)
+  const husbandDiff = summary.husbandTotalPaid - summary.husbandTotalBurden
+  lines.push(`　　差額: ${husbandDiff >= 0 ? '+' : ''}¥${Math.round(husbandDiff).toLocaleString()}`)
+  
+  lines.push('')
+  
+  // 妻の詳細
+  lines.push(`妻　実際の支払額: ¥${summary.wifeTotalPaid.toLocaleString()}`)
+  lines.push(`　　負担すべき額: ¥${Math.round(summary.wifeTotalBurden).toLocaleString()}`)
+  const wifeDiff = summary.wifeTotalPaid - summary.wifeTotalBurden
+  lines.push(`　　差額: ${wifeDiff >= 0 ? '+' : ''}¥${Math.round(wifeDiff).toLocaleString()}`)
+  
+  // 承認済み費用一覧
+  if (summary.approvedSettlements.length > 0) {
+    lines.push('')
+    lines.push('承認済み費用:')
+    
+    summary.approvedSettlements.forEach(settlement => {
+      const payerName = settlement.expense.payer === 'husband' ? '夫' : '妻'
+      lines.push(`・${settlement.expense.description}: ¥${settlement.expense.amount.toLocaleString()}（${payerName}支払）`)
+    })
+    
+    const totalAmount = summary.approvedSettlements.reduce((sum, s) => sum + s.expense.amount, 0)
+    lines.push('')
+    lines.push(`計${summary.approvedSettlements.length}件の費用、総額: ¥${totalAmount.toLocaleString()}`)
+  }
+  
+  return lines.join('\n')
+} 

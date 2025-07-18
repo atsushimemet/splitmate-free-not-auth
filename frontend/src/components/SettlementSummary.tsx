@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { SettlementCalculation } from '../types'
-import { displayYearMonth, parseYearMonth } from '../utils/dateUtils'
 import {
     calculateSettlementSummary,
+    generateShareableText,
     getSettlementDirectionText,
     getSettlementStatusColor,
     getSettlementStatusText
@@ -13,8 +14,48 @@ interface SettlementSummaryProps {
   onClearApprovedSettlements: () => void
 }
 
+// LINE共有用テキストコンポーネント
+const ShareableTextComponent = ({ text }: { text: string }) => {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('コピーに失敗しました:', err)
+    }
+  }
+
+  return (
+    <div className="bg-white lg:rounded-lg lg:shadow-md p-4 lg:p-6">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-base lg:text-lg font-semibold">LINE共有用テキスト</h3>
+        <button
+          onClick={handleCopy}
+          className={`px-3 py-1 rounded-md text-sm transition-colors ${
+            copied 
+              ? 'bg-green-600 text-white' 
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
+          {copied ? 'コピー完了!' : 'コピー'}
+        </button>
+      </div>
+      <div className="bg-gray-100 border border-gray-300 rounded-md p-3 font-mono text-sm whitespace-pre-wrap overflow-x-auto">
+        {text}
+      </div>
+      <p className="text-xs text-gray-500 mt-2">
+        上記のテキストをLINEやメールなどで相手に送信できます
+      </p>
+    </div>
+  )
+}
+
 export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettlements }: SettlementSummaryProps) => {
   const summary = calculateSettlementSummary(settlements)
+  const shareableText = generateShareableText(summary)
 
   // 戻るボタンのハンドラ（承認済み精算をクリアしてから画面遷移）
   const handleBack = () => {
@@ -31,12 +72,6 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
   // 支払者の表示名
   const getPayerName = (payer: 'husband' | 'wife') => {
     return payer === 'husband' ? '夫' : '妻'
-  }
-
-  // 日付のフォーマット
-  const formatDate = (dateString: string) => {
-    const { year, month } = parseYearMonth(dateString)
-    return displayYearMonth(year, month)
   }
 
   return (
@@ -156,9 +191,6 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
                         支払者
                       </th>
                       <th className="px-3 lg:px-4 py-2 lg:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        年月
-                      </th>
-                      <th className="px-3 lg:px-4 py-2 lg:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         夫負担
                       </th>
                       <th className="px-3 lg:px-4 py-2 lg:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -180,9 +212,6 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
                           {getPayerName(settlement.expense.payer)}
                         </td>
                         <td className="px-3 lg:px-4 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-900">
-                          {formatDate(settlement.expense.date)}
-                        </td>
-                        <td className="px-3 lg:px-4 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-900">
                           ¥{Math.round(settlement.husbandBurden).toLocaleString()}
                         </td>
                         <td className="px-3 lg:px-4 py-3 lg:py-4 whitespace-nowrap text-sm text-gray-900">
@@ -200,6 +229,9 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
               </div>
             </div>
           )}
+
+          {/* LINE共有用テキストコンポーネント */}
+          <ShareableTextComponent text={shareableText} />
         </div>
       </div>
     </div>

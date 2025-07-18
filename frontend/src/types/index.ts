@@ -4,7 +4,6 @@ export interface Expense {
   description: string
   amount: number
   payer: 'husband' | 'wife'
-  date: string // YYYY-MM format
   createdAt: string
   isApproved?: boolean
 }

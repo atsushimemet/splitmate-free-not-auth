@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Expense } from '../types'
-import { displayYearMonth, parseYearMonth } from '../utils/dateUtils'
-import { YearMonthSelector } from './YearMonthSelector'
 
 interface ExpenseListProps {
   expenses: Expense[]
@@ -13,19 +11,13 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Partial<Expense>>({})
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
-  const [filterMonth, setFilterMonth] = useState<string>('')
-
-  // 月でフィルタリング
-  const filteredExpenses = filterMonth
-    ? expenses.filter(expense => expense.date === filterMonth)
-    : expenses
 
   // 全選択/全解除
   const handleSelectAll = () => {
-    if (selectedItems.size === filteredExpenses.length) {
+    if (selectedItems.size === expenses.length) {
       setSelectedItems(new Set())
     } else {
-      setSelectedItems(new Set(filteredExpenses.map(expense => expense.id)))
+      setSelectedItems(new Set(expenses.map(expense => expense.id)))
     }
   }
 
@@ -74,18 +66,6 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
     return payer === 'husband' ? '夫' : '妻'
   }
 
-  // 日付のフォーマット（新しいユーティリティ関数を使用）
-  const formatDate = (dateString: string) => {
-    const { year, month } = parseYearMonth(dateString)
-    return displayYearMonth(year, month)
-  }
-
-  // 月の選択肢を生成（プルダウン用）
-  const getMonthOptions = () => {
-    const months = [...new Set(expenses.map(expense => expense.date))].sort()
-    return months
-  }
-
   if (expenses.length === 0) {
     return (
       <div className="bg-white p-4 lg:p-6 lg:rounded-lg lg:shadow-md">
@@ -101,20 +81,6 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-3 lg:mb-4 gap-2 lg:gap-0">
           <h3 className="text-base lg:text-lg font-semibold">費用一覧</h3>
           <div className="flex gap-2 items-center">
-            {/* 月フィルター */}
-            <select
-              value={filterMonth}
-              onChange={(e) => setFilterMonth(e.target.value)}
-              className="px-2 lg:px-3 py-1 border border-gray-300 rounded-md text-xs lg:text-sm flex-1 lg:flex-none"
-            >
-              <option value="">全ての月</option>
-              {getMonthOptions().map(month => (
-                <option key={month} value={month}>
-                  {formatDate(month)}
-                </option>
-              ))}
-            </select>
-            
             {/* 一括削除ボタン */}
             {selectedItems.size > 0 && (
               <button
@@ -128,11 +94,11 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
         </div>
 
         {/* 全選択チェックボックス */}
-        {filteredExpenses.length > 0 && (
+        {expenses.length > 0 && (
           <label className="flex items-center gap-2 text-sm text-gray-600">
             <input
               type="checkbox"
-              checked={selectedItems.size === filteredExpenses.length && filteredExpenses.length > 0}
+              checked={selectedItems.size === expenses.length && expenses.length > 0}
               onChange={handleSelectAll}
               className="rounded"
             />
@@ -158,15 +124,12 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
                 支払者
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                年月
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 操作
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredExpenses.map((expense) => (
+            {expenses.map((expense) => (
               <tr key={expense.id} className="hover:bg-gray-50">
                 <td className="px-4 py-4 whitespace-nowrap">
                   <input
@@ -214,19 +177,6 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
                     <span className="text-sm text-gray-900">{getPayerName(expense.payer)}</span>
                   )}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  {editingId === expense.id ? (
-                    <div className="w-48">
-                      <YearMonthSelector
-                        value={editForm.date || expense.date}
-                        onChange={(value) => setEditForm(prev => ({ ...prev, date: value }))}
-                        className="text-sm"
-                      />
-                    </div>
-                  ) : (
-                    <span className="text-sm text-gray-900">{formatDate(expense.date)}</span>
-                  )}
-                </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm">
                   {editingId === expense.id ? (
                     <div className="flex gap-1">
@@ -269,12 +219,6 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
           </tbody>
         </table>
       </div>
-
-      {filteredExpenses.length === 0 && filterMonth && (
-        <div className="p-6 text-center text-gray-500">
-          {formatDate(filterMonth)}の費用はありません
-        </div>
-      )}
     </div>
   )
 } 

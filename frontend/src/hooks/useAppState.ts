@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AllocationRatio, Expense, ExpenseForm, SettlementCalculation } from '../types'
-import { formatYearMonth, getPreviousMonth } from '../utils/dateUtils'
 
 // localStorageのキー生成
 const getStorageKey = (id: string, dataType: string) => `splitmate_${id}_${dataType}`
@@ -92,14 +91,9 @@ export const useAppState = (userId: string) => {
 
   // 費用追加
   const addExpense = useCallback((expense: ExpenseForm) => {
-    // 自動的に先月の年月を設定
-    const previousMonth = getPreviousMonth()
-    const date = formatYearMonth(previousMonth.year, previousMonth.month)
-    
     const newExpense: Expense = {
       ...expense,
       amount: Number(expense.amount),
-      date,
       id: Date.now().toString(),
       createdAt: new Date().toISOString()
     }
