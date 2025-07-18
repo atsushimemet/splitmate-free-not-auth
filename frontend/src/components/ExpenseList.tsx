@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Expense } from '../types'
+import { displayYearMonth, parseYearMonth } from '../utils/dateUtils'
+import { YearMonthSelector } from './YearMonthSelector'
 
 interface ExpenseListProps {
   expenses: Expense[]
@@ -72,13 +74,13 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
     return payer === 'husband' ? '夫' : '妻'
   }
 
-  // 日付のフォーマット
+  // 日付のフォーマット（新しいユーティリティ関数を使用）
   const formatDate = (dateString: string) => {
-    const [year, month] = dateString.split('-')
-    return `${year}年${month}月`
+    const { year, month } = parseYearMonth(dateString)
+    return displayYearMonth(year, month)
   }
 
-  // 月の選択肢を生成
+  // 月の選択肢を生成（プルダウン用）
   const getMonthOptions = () => {
     const months = [...new Set(expenses.map(expense => expense.date))].sort()
     return months
@@ -214,12 +216,13 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap">
                   {editingId === expense.id ? (
-                    <input
-                      type="month"
-                      value={editForm.date || expense.date}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))}
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                    />
+                    <div className="w-48">
+                      <YearMonthSelector
+                        value={editForm.date || expense.date}
+                        onChange={(value) => setEditForm(prev => ({ ...prev, date: value }))}
+                        className="text-sm"
+                      />
+                    </div>
                   ) : (
                     <span className="text-sm text-gray-900">{formatDate(expense.date)}</span>
                   )}

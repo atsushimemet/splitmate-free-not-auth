@@ -1,16 +1,22 @@
 import { useState } from 'react'
 import { ExpenseForm as ExpenseFormType } from '../types'
+import { formatYearMonth, getPreviousMonth } from '../utils/dateUtils'
+import { YearMonthSelector } from './YearMonthSelector'
 
 interface ExpenseFormProps {
   onSubmit: (expense: ExpenseFormType) => void
 }
 
 export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
+  // デフォルト値として前月を設定
+  const defaultPrevious = getPreviousMonth()
+  const defaultDate = formatYearMonth(defaultPrevious.year, defaultPrevious.month)
+
   const [form, setForm] = useState<ExpenseFormType>({
     description: '',
     amount: '',
     payer: 'husband',
-    date: new Date().toISOString().slice(0, 7) // YYYY-MM format
+    date: defaultDate
   })
 
   const [errors, setErrors] = useState<Partial<ExpenseFormType>>({})
@@ -45,12 +51,12 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
         amount: Number(form.amount)
       })
       
-      // フォームをリセット
+      // フォームをリセット（年月はデフォルト値に戻す）
       setForm({
         description: '',
         amount: '',
         payer: 'husband',
-        date: new Date().toISOString().slice(0, 7)
+        date: defaultDate
       })
       setErrors({})
     }
@@ -127,23 +133,16 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
             </select>
           </div>
 
-          {/* 年月 */}
+          {/* 年月（プルダウン形式） */}
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               年月
             </label>
-            <input
-              type="month"
-              id="date"
+            <YearMonthSelector
               value={form.date}
-              onChange={(e) => handleInputChange('date', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.date ? 'border-red-500' : 'border-gray-300'
-              }`}
+              onChange={(value) => handleInputChange('date', value)}
+              error={errors.date}
             />
-            {errors.date && (
-              <p className="text-red-500 text-sm mt-1">{errors.date}</p>
-            )}
           </div>
         </div>
 
