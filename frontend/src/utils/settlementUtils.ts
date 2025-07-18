@@ -91,6 +91,8 @@ export const getSettlementDirectionText = (direction: string): string => {
   }
 }
 
+
+
 // 精算状況のテキスト表示
 export const getSettlementStatusText = (status: string): string => {
   switch (status) {

@@ -107,8 +107,14 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
               </div>
             ) : (
               <div className="text-center py-6">
-                <div className="text-xl lg:text-2xl font-bold text-blue-600 mb-2">
-                  {getSettlementDirectionText(summary.finalDirection)}
+                <div className="text-xl lg:text-2xl font-bold mb-2">
+                  {summary.finalDirection === 'husband_to_wife' ? (
+                    <><span className="text-blue-600">夫</span> <span className="text-gray-800">→</span> <span className="text-pink-600">妻</span></>
+                  ) : summary.finalDirection === 'wife_to_husband' ? (
+                    <><span className="text-pink-600">妻</span> <span className="text-gray-800">→</span> <span className="text-blue-600">夫</span></>
+                  ) : (
+                    getSettlementDirectionText(summary.finalDirection)
+                  )}
                 </div>
                 <div className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
                   ¥{summary.totalSettlementAmount.toLocaleString()}
