@@ -3,6 +3,7 @@ import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate, useParam
 import { TopPage } from './components/AccessDenied'
 import { ExpenseForm } from './components/ExpenseForm'
 import { ExpenseList } from './components/ExpenseList'
+import { LandingPage } from './components/LandingPage'
 import { SettlementSummary } from './components/SettlementSummary'
 import { ShareComponent } from './components/ShareComponent'
 import { AppProvider, useAppContext } from './context/AppContext'
@@ -15,8 +16,6 @@ import {
 } from './utils/settlementUtils'
 
 type TabType = 'expense' | 'allocation' | 'settlement'
-
-
 
 // メインのタブコンポーネント
 function MainTabs() {
@@ -83,6 +82,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<TopPageComponent />} />
+        <Route path="/landing_page" element={<LandingPage />} />
         <Route path="/:userId" element={<AppWrapper />} />
         <Route path="/:userId/settlement-summary" element={<SettlementSummaryWrapper />} />
       </Routes>
