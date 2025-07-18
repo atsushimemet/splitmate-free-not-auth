@@ -18,8 +18,14 @@ export const SettlementSummary = ({ settlements, onBack, onClearApprovedSettleme
 
   // 戻るボタンのハンドラ（承認済み精算をクリアしてから画面遷移）
   const handleBack = () => {
-    onClearApprovedSettlements() // 承認済み精算をクリア
-    onBack() // 画面遷移
+    const confirmed = window.confirm(
+      '「戻る」を押下するとデータがクリアされます。精算サマリーを相手に連携しましたか？'
+    )
+    
+    if (confirmed) {
+      onClearApprovedSettlements() // 承認済み精算をクリア
+      onBack() // 画面遷移
+    }
   }
 
   // 支払者の表示名
