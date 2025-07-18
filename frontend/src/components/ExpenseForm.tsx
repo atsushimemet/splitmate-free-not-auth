@@ -1,22 +1,15 @@
 import { useState } from 'react'
 import { ExpenseForm as ExpenseFormType } from '../types'
-import { formatYearMonth, getPreviousMonth } from '../utils/dateUtils'
-import { YearMonthSelector } from './YearMonthSelector'
 
 interface ExpenseFormProps {
   onSubmit: (expense: ExpenseFormType) => void
 }
 
 export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
-  // デフォルト値として前月を設定
-  const defaultPrevious = getPreviousMonth()
-  const defaultDate = formatYearMonth(defaultPrevious.year, defaultPrevious.month)
-
   const [form, setForm] = useState<ExpenseFormType>({
     description: '',
     amount: '',
-    payer: 'husband',
-    date: defaultDate
+    payer: 'husband'
   })
 
   const [errors, setErrors] = useState<Partial<ExpenseFormType>>({})
@@ -34,10 +27,6 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       newErrors.amount = '正しい金額を入力してください'
     }
     
-    if (!form.date) {
-      newErrors.date = '年月を選択してください'
-    }
-    
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -51,12 +40,11 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
         amount: Number(form.amount)
       })
       
-      // フォームをリセット（年月はデフォルト値に戻す）
+      // フォームをリセット
       setForm({
         description: '',
         amount: '',
-        payer: 'husband',
-        date: defaultDate
+        payer: 'husband'
       })
       setErrors({})
     }
@@ -131,18 +119,6 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
               <option value="husband">夫</option>
               <option value="wife">妻</option>
             </select>
-          </div>
-
-          {/* 年月（プルダウン形式） */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              年月
-            </label>
-            <YearMonthSelector
-              value={form.date}
-              onChange={(value) => handleInputChange('date', value)}
-              error={errors.date}
-            />
           </div>
         </div>
 

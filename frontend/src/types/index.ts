@@ -31,5 +31,4 @@ export interface ExpenseForm {
   description: string
   amount: string
   payer: 'husband' | 'wife'
-  date: string
 } 
