@@ -25,7 +25,11 @@ function MainTabs() {
   const [activeTab, setActiveTab] = useState<TabType>('expense')
   const appState = useAppContext()
   const navigate = useNavigate()
-  const { userId } = useParams<{ userId: string }>()!
+  const { userId } = useParams<{ userId: string }>()
+  
+  if (!userId || !isValidIdentifier(userId)) {
+    return <Navigate to="/" replace />
+  }
 
   const tabs = [
     { id: 'expense', label: '費用入力', content: <ExpenseTab appState={appState} /> },
@@ -136,16 +140,11 @@ function SettlementSummaryPage() {
 }
 
 // 費用入力タブ
-function ExpenseTab({ appState }: { appState: ReturnType<typeof useAppState> }) {
+function ExpenseTab({ appState }: { appState: any }) {
   const { expenses, addExpense, deleteExpense, updateExpense } = appState
 
   const handleAddExpense = (expenseForm: ExpenseFormType) => {
-    addExpense({
-      description: expenseForm.description,
-      amount: Number(expenseForm.amount),
-      payer: expenseForm.payer,
-      date: expenseForm.date
-    })
+    addExpense(expenseForm)
   }
 
   return (
@@ -161,7 +160,7 @@ function ExpenseTab({ appState }: { appState: ReturnType<typeof useAppState> }) 
 }
 
 // 配分比率設定タブ
-function AllocationTab({ appState }: { appState: ReturnType<typeof useAppState> }) {
+function AllocationTab({ appState }: { appState: any }) {
   const { allocationRatio, updateAllocationRatio } = appState
   const [husbandRatio, setHusbandRatio] = useState(allocationRatio.husband.toString())
   const [wifeRatio, setWifeRatio] = useState(allocationRatio.wife.toString())
@@ -245,7 +244,7 @@ function SettlementTab({
   navigate,
   userId
 }: { 
-  appState: ReturnType<typeof useAppState>, 
+  appState: any, 
   navigate: (path: string) => void,
   userId: string
 }) {
@@ -256,7 +255,7 @@ function SettlementTab({
     if (selectedSettlements.size === settlements.length) {
       setSelectedSettlements(new Set())
     } else {
-      setSelectedSettlements(new Set(settlements.map(s => s.expenseId)))
+      setSelectedSettlements(new Set(settlements.map((s: any) => s.expenseId)))
     }
   }
 
@@ -282,7 +281,7 @@ function SettlementTab({
   }
 
   // 承認済み精算の件数
-  const approvedCount = settlements.filter(s => s.status === 'approved').length
+  const approvedCount = settlements.filter((s: any) => s.status === 'approved').length
 
   if (settlements.length === 0) {
     return (
@@ -351,7 +350,7 @@ function SettlementTab({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {settlements.map((settlement) => (
+              {settlements.map((settlement: any) => (
                 <tr key={settlement.expenseId} className="hover:bg-gray-50">
                   <td className="px-4 py-4 whitespace-nowrap">
                     <input

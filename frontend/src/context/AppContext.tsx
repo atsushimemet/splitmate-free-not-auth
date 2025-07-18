@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext } from 'react'
 import { useAppState } from '../hooks/useAppState'
 
 // Context型定義
-type AppContextType = ReturnType<typeof useAppState>
+type AppContextType = any
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
 

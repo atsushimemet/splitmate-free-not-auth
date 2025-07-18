@@ -35,10 +35,7 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
     e.preventDefault()
     
     if (validateForm()) {
-      onSubmit({
-        ...form,
-        amount: Number(form.amount)
-      })
+      onSubmit(form)
       
       // 連続登録のため説明と支払者を維持、金額のみクリア
       setForm(prev => ({
