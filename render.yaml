@@ -4,10 +4,12 @@ services:
     env: static
     buildCommand: cd frontend && npm ci && npm run build
     staticPublishPath: frontend/dist
-    nginxConfigPath: frontend/nginx.conf
     routes:
       - type: rewrite
         source: /landing_page
+        destination: /index.html
+      - type: rewrite
+        source: /landing_page/
         destination: /index.html
       - type: rewrite
         source: "/*"

@@ -1,6 +1,4 @@
 /landing_page /index.html 200
 /landing_page/ /index.html 200
+/landing_page/* /index.html 200
 /* /index.html 200
-
-# Additional SPA routing support
-/landing_page* /index.html 200
