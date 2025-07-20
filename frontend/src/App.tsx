@@ -11,9 +11,9 @@ import { AppProvider, useAppContext } from './context/AppContext'
 import { ExpenseForm as ExpenseFormType } from './types'
 import { createPathWithId, isIdentifierExists, isValidIdentifier } from './utils/identifierUtils'
 import {
-  getSettlementDirectionText,
-  getSettlementStatusColor,
-  getSettlementStatusText
+    getSettlementDirectionText,
+    getSettlementStatusColor,
+    getSettlementStatusText
 } from './utils/settlementUtils'
 
 type TabType = 'expense' | 'allocation' | 'settlement'
@@ -94,6 +94,7 @@ function App() {
       <Routes>
         <Route path="/" element={<TopPageComponent />} />
         <Route path="/landing_page" element={<LandingPage />} />
+        <Route path="/landing_page/" element={<LandingPage />} />
         <Route path="/:userId" element={<AppWrapper />} />
         <Route path="/:userId/settlement-summary" element={<SettlementSummaryWrapper />} />
       </Routes>
