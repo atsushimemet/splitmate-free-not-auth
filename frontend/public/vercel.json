@@ -5,6 +5,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/landing_page/(.*)",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
