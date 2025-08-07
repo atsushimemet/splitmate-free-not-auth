@@ -96,17 +96,21 @@ export const useAppState = (userId: string) => {
       settlementDirection = 'husband_to_wife'
     }
 
-    const settlement: SettlementCalculation = {
-      expenseId: expense.id,
-      expense,
-      husbandBurden,
-      wifeBurden,
-      settlementAmount,
-      settlementDirection,
-      status: 'pending'
-    }
-
     setSettlements(prev => {
+      // 既存の精算データから現在のステータスを取得
+      const existingSettlement = prev.find(s => s.expenseId === expense.id)
+      const currentStatus = existingSettlement ? existingSettlement.status : 'pending'
+
+      const settlement: SettlementCalculation = {
+        expenseId: expense.id,
+        expense,
+        husbandBurden,
+        wifeBurden,
+        settlementAmount,
+        settlementDirection,
+        status: currentStatus // 既存のステータスを保持
+      }
+
       const filtered = prev.filter(s => s.expenseId !== expense.id)
       return [...filtered, settlement]
     })
@@ -151,9 +155,41 @@ export const useAppState = (userId: string) => {
   const updateAllocationRatio = useCallback((ratio: AllocationRatio) => {
     setAllocationRatio(ratio)
     
-    // 全ての費用に対して精算を再計算
-    expenses.forEach(expense => calculateSettlement(expense))
-  }, [expenses, calculateSettlement])
+    // 現在のsettlementsの状態を保持しながら精算を再計算
+    setSettlements(prevSettlements => {
+      const updatedSettlements = expenses.map(expense => {
+        const husbandBurden = (expense.amount * ratio.husband) / 100
+        const wifeBurden = (expense.amount * ratio.wife) / 100
+        
+        let settlementAmount: number
+        let settlementDirection: 'husband_to_wife' | 'wife_to_husband'
+        
+        if (expense.payer === 'husband') {
+          settlementAmount = wifeBurden
+          settlementDirection = 'wife_to_husband'
+        } else {
+          settlementAmount = husbandBurden
+          settlementDirection = 'husband_to_wife'
+        }
+
+        // 既存のステータスを保持
+        const existingSettlement = prevSettlements.find(s => s.expenseId === expense.id)
+        const currentStatus = existingSettlement ? existingSettlement.status : 'pending'
+
+        return {
+          expenseId: expense.id,
+          expense,
+          husbandBurden,
+          wifeBurden,
+          settlementAmount,
+          settlementDirection,
+          status: currentStatus
+        }
+      })
+      
+      return updatedSettlements
+    })
+  }, [expenses])
 
   // 精算承認
   const approveSettlement = useCallback((expenseId: string) => {
